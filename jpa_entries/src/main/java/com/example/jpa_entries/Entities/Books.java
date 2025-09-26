@@ -15,7 +15,7 @@ public class Books {
 
     @ManyToOne
     @JoinColumn(name = "publisher_id") // FK column
-    @JsonIgnore  // <--- add this
+    @JsonIgnore
     private Publisher publisher;
 
 

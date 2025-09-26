@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.jpa_entries.Entities.Books;
 import com.example.jpa_entries.Entities.Publisher;
+import com.example.jpa_entries.Exceptions.ResourceNotFoundException;
 import com.example.jpa_entries.Repositories.BookRepository;
 import com.example.jpa_entries.Repositories.PublisherRepository;
+import com.example.jpa_entries.Services.BookService;
 
 @RestController
 @RequestMapping("/books")
@@ -28,14 +30,16 @@ public class BooksController {
 
     private final BookRepository bookRepository;
     private final PublisherRepository publisherRepository;
-    public BooksController(BookRepository bookRepository, PublisherRepository publisherRepository) {
+    private final BookService bookService;
+    public BooksController(BookRepository bookRepository, PublisherRepository publisherRepository, BookService bookService) {
         this.bookRepository = bookRepository;
         this.publisherRepository = publisherRepository;
+        this.bookService = bookService;
     }
 
     @GetMapping
     public List<Books> getAll() {
-        return bookRepository.findAll();
+        return bookService.getAllBooks();
     }
 
     @PostMapping
@@ -56,23 +60,26 @@ public class BooksController {
 
     @GetMapping("/{id}")
     public Books getById(@PathVariable Long id) {
-        return bookRepository.findById(id).orElse(null);
+        return bookService.getBook(id); // used service layer
     }
+// In BooksController
+@PutMapping("/{id}")
+public Books updateBook(@PathVariable Long id, @RequestBody Books updatedBook) {
+    return bookRepository.findById(id)
+            .map(book -> {
+                book.setTitle(updatedBook.getTitle());
+                book.setAuthor(updatedBook.getAuthor());
+                
+                return bookRepository.save(book); // save() updates because id is same
+            })
+            .orElseThrow(() -> new RuntimeException("Book not found with id " + id));
+}
 
-    @PutMapping("/{id}")
-    public Books update(@PathVariable Long id, @RequestBody Books data) {
-        return bookRepository.findById(id).map(b -> {
-            b.setTitle(data.getTitle());
-            b.setAuthor(data.getAuthor());
-            return bookRepository.save(b);
-        }).orElse(null);
-    }
-
-    @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id) {
-        bookRepository.deleteById(id);
-        return "Book deleted";
-    }
+// In BooksController
+@DeleteMapping("/{id}")
+public void deleteBook(@PathVariable Long id) {
+   bookService.deleteBook(id);
+}
 
 
     @GetMapping("/publisher/{publisherId}")
