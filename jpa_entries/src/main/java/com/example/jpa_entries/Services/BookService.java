@@ -2,6 +2,7 @@ package com.example.jpa_entries.Services;
 
 import com.example.jpa_entries.Entities.Books;
 import com.example.jpa_entries.Repositories.BookRepository;
+import com.example.jpa_entries.dto.BookDTO;
 import com.example.jpa_entries.Exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -29,5 +30,12 @@ public class BookService {
         if (!bookRepository.existsById(id))
             throw new ResourceNotFoundException("Book not found with id " + id);
         bookRepository.deleteById(id);
+    }
+
+        public List<BookDTO> getAllBooksDTO() {
+        return bookRepository.findAll()
+                .stream()
+                .map(b -> new BookDTO(b.getId(), b.getTitle(), b.getAuthor()))
+                .toList();
     }
 }

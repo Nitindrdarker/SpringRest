@@ -23,6 +23,7 @@ import com.example.jpa_entries.Exceptions.ResourceNotFoundException;
 import com.example.jpa_entries.Repositories.BookRepository;
 import com.example.jpa_entries.Repositories.PublisherRepository;
 import com.example.jpa_entries.Services.BookService;
+import com.example.jpa_entries.dto.BookDTO;
 
 @RestController
 @RequestMapping("/books")
@@ -40,6 +41,12 @@ public class BooksController {
     @GetMapping
     public List<Books> getAll() {
         return bookService.getAllBooks();
+    }
+
+
+    @GetMapping("/dto")
+    public List<BookDTO> getAllBooksDTO() {
+        return bookService.getAllBooksDTO();
     }
 
     @PostMapping
