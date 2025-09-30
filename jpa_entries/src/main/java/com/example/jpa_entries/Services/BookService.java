@@ -4,6 +4,9 @@ import com.example.jpa_entries.Entities.Books;
 import com.example.jpa_entries.Repositories.BookRepository;
 import com.example.jpa_entries.dto.BookDTO;
 import com.example.jpa_entries.Exceptions.ResourceNotFoundException;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -11,6 +14,8 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository bookRepository;
+    @Autowired
+    ModelMapper modelMapper;
 
     public BookService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
@@ -33,9 +38,18 @@ public class BookService {
     }
 
         public List<BookDTO> getAllBooksDTO() {
+        // return bookRepository.findAll()
+        //         .stream()
+        //         .map(b -> new BookDTO(b.getId(), b.getTitle(), b.getAuthor()))
+        //         .toList();
+
         return bookRepository.findAll()
                 .stream()
-                .map(b -> new BookDTO(b.getId(), b.getTitle(), b.getAuthor()))
+                .map(book -> modelMapper.map(book, BookDTO.class)) // automatic mapping
                 .toList();
+    }
+
+    public BookDTO convertToDTO(Books book) {
+        return modelMapper.map(book, BookDTO.class);
     }
 }
