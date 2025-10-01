@@ -1,7 +1,9 @@
 package com.example.jpa_entries.Controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,9 +19,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.jpa_entries.Entities.Books;
+import com.example.jpa_entries.Entities.Category;
 import com.example.jpa_entries.Entities.Publisher;
 import com.example.jpa_entries.Exceptions.ResourceNotFoundException;
 import com.example.jpa_entries.Repositories.BookRepository;
+import com.example.jpa_entries.Repositories.CategoryRepository;
 import com.example.jpa_entries.Repositories.PublisherRepository;
 import com.example.jpa_entries.Services.BookService;
 import com.example.jpa_entries.dto.BookDTO;
@@ -31,12 +35,14 @@ public class BooksController {
     private final BookRepository bookRepository;
     private final PublisherRepository publisherRepository;
     private final BookService bookService;
+    private final CategoryRepository categoryRepository;
 
     public BooksController(BookRepository bookRepository, PublisherRepository publisherRepository,
-            BookService bookService) {
+            BookService bookService, CategoryRepository categoryRepository) {
         this.bookRepository = bookRepository;
         this.publisherRepository = publisherRepository;
         this.bookService = bookService;
+        this.categoryRepository = categoryRepository;
     }
 
     @GetMapping
@@ -52,15 +58,31 @@ public class BooksController {
     @PostMapping
     public Books create(@RequestBody Map<String, Object> request) {
 
+        // Extract basic info
         String title = (String) request.get("title");
         String author = (String) request.get("author");
         Long publisherId = Long.valueOf(request.get("publisher_id").toString());
 
+        // Find Publisher
         Publisher pub = publisherRepository.findById(publisherId)
                 .orElseThrow(() -> new RuntimeException("Publisher not found"));
 
-        Books book = new Books(title, author, pub);
+        // Create Book
+        Books book = new Books();
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setPublisher(pub);
 
+        // Handle categories
+        List<Category> categories = new ArrayList<>();
+
+        Category category = new Category("fuck you");
+        categoryRepository.save(category);
+        categories.add(category);
+
+        book.setCategories(categories);
+
+        // Save book
         return bookRepository.save(book);
     }
 

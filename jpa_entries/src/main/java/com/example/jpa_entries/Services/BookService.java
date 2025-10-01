@@ -2,6 +2,7 @@ package com.example.jpa_entries.Services;
 
 import com.example.jpa_entries.Entities.Books;
 import com.example.jpa_entries.Repositories.BookRepository;
+import com.example.jpa_entries.Repositories.CategoryRepository;
 import com.example.jpa_entries.dto.BookDTO;
 import com.example.jpa_entries.Exceptions.ResourceNotFoundException;
 
@@ -17,19 +18,21 @@ public class BookService {
     @Autowired
     ModelMapper modelMapper;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     public BookService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
     public Books getBook(Long id) {
         return bookRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Book not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id " + id));
     }
 
     public List<Books> getAllBooks() {
         return bookRepository.findAll();
     }
-
 
     public void deleteBook(Long id) {
         if (!bookRepository.existsById(id))
@@ -37,11 +40,11 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
-        public List<BookDTO> getAllBooksDTO() {
+    public List<BookDTO> getAllBooksDTO() {
         // return bookRepository.findAll()
-        //         .stream()
-        //         .map(b -> new BookDTO(b.getId(), b.getTitle(), b.getAuthor()))
-        //         .toList();
+        // .stream()
+        // .map(b -> new BookDTO(b.getId(), b.getTitle(), b.getAuthor()))
+        // .toList();
 
         return bookRepository.findAll()
                 .stream()

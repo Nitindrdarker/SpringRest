@@ -1,13 +1,23 @@
 package com.example.jpa_entries.Entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 @Entity
-public class Publisher {
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,16 +25,15 @@ public class Publisher {
 
     private String name;
 
-    // One publisher can have many books
-    @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties("publisher") // ignore Books.publisher
+    @ManyToMany(mappedBy = "categories")
+    @JsonIgnoreProperties("categories")
     private List<Books> books = new ArrayList<>();
 
     // Constructors
-    public Publisher() {
+    public Category() {
     }
 
-    public Publisher(String name) {
+    public Category(String name) {
         this.name = name;
     }
 
