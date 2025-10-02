@@ -22,6 +22,7 @@ import com.example.jpa_entries.Entities.Books;
 import com.example.jpa_entries.Entities.Category;
 import com.example.jpa_entries.Entities.Publisher;
 import com.example.jpa_entries.Exceptions.ResourceNotFoundException;
+import com.example.jpa_entries.Projections.BookSummary;
 import com.example.jpa_entries.Repositories.BookRepository;
 import com.example.jpa_entries.Repositories.CategoryRepository;
 import com.example.jpa_entries.Repositories.PublisherRepository;
@@ -144,5 +145,10 @@ public class BooksController {
     @GetMapping("/search")
     public List<Books> searchBooks(@RequestParam String keyword) {
         return bookRepository.searchByTitle(keyword);
+    }
+
+    @GetMapping("/summaries")
+    public List<BookSummary> getBookSummaries() {
+        return bookRepository.findAllBookSummaries();
     }
 }
