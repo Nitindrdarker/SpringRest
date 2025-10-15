@@ -1,6 +1,11 @@
-package com.example.jpa_entries.Entities;
+package com.example.jwt2.demo.Entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
@@ -15,7 +20,7 @@ public class User {
 
     private String password;
 
-    private String role; // e.g., "ROLE_USER" or "ROLE_ADMIN"
+    private String role;
 
     public User() {
     }
@@ -26,7 +31,7 @@ public class User {
         this.role = role;
     }
 
-    // Getters and Setters
+    // Getters & Setters
     public Long getId() {
         return id;
     }
